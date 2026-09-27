@@ -67,6 +67,15 @@ PATCHES = [
         ' return fs.mkdirSync(d, { recursive: !0 }), d; } catch (e) { return os.tmpdir(); } })(),'
         ' "stremio-" + player + "-subtitles.srt")',
     ),
+    (
+        "mpv: gomulu altyazilarda TR -> EN otomatik tercih (--slang)",
+        """            mpv: {
+                title: "MPV",
+                args: [ "--no-terminal" ],""",
+        """            mpv: {
+                title: "MPV",
+                args: [ "--no-terminal", "--slang=tr,en" ],""",
+    ),
 ]
 
 

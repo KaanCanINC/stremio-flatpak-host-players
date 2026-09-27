@@ -1,5 +1,14 @@
 --- /tmp/opencode/stremio-server.js.bak	2026-09-27 17:28:01.279364965 +0300
-+++ /home/kaan/.local/share/flatpak/app/com.stremio.Stremio/x86_64/stable/7580e7db921fc46aa1cca51623ec404b5a313dd5868ece9506cac4a42ed92131/files/libexec/stremio/server.js	2026-09-27 17:28:40.632593654 +0300
++++ /home/kaan/.local/share/flatpak/app/com.stremio.Stremio/x86_64/stable/7580e7db921fc46aa1cca51623ec404b5a313dd5868ece9506cac4a42ed92131/files/libexec/stremio/server.js	2026-09-27 18:26:02.511758211 +0300
+@@ -83161,7 +83161,7 @@
+             },
+             mpv: {
+                 title: "MPV",
+-                args: [ "--no-terminal" ],
++                args: [ "--no-terminal", "--slang=tr,en" ],
+                 subArg: "--sub-file=",
+                 timeArg: "--start=",
+                 playArg: "",
 @@ -83208,10 +83208,19 @@
                  }
              }

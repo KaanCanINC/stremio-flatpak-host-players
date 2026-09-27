@@ -48,6 +48,32 @@ curl -s http://127.0.0.1:11470/casting
 Yayin sirasinda oynaticidaki **`...` menusu -> Play in MPV**.
 Kaldigin saniye `--start` ile aktarilir, harici altyazilar calisir.
 
+## Altyazi davranisi (onemli)
+
+Harici oynaticiya **yalnizca Stremio oynaticisinda o an SECILI olan
+tek altyazi** gonderilir (`--sub-file` ile). Gonderim akisi:
+
+1. Yayini ac, Stremio'nun altyazi menusunden **Turkce altyaziyi sec**
+   (OpenSubtitles listesinden).
+2. Sonra `... -> Play in MPV` de. Secili TR altyazi MPV'de otomatik acilir.
+
+Hicbir altyazi secilmezse MPV'ye harici altyazi gitmez; videoya gomulu
+altyazilar (EN, FR, DE, ES, FI...) arasindan MPV kendi secer.
+
+Yama MPV'ye ek olarak `--slang=tr,en` parametresi verir, yani gomulu
+altyazilar arasinda **once Turkce, yoksa Ingilizce** otomatik secilir.
+Olculen davranis (mpv IPC ile dogrulandi):
+
+| durum | secilen |
+|---|---|
+| secim yok, slang yok | gomulu EN |
+| Stremio'da TR secili | harici TR dosyasi |
+| slang=tr,en, harici yok | gomulu TR (yoksa EN) |
+| slang=tr,en + harici TR | harici TR dosyasi (bozulmaz) |
+
+Farkli dil tercihi istersen `apply.py` icindeki `--slang=tr,en`
+degerini degistir (örn. `--slang=tr,de,en`).
+
 Not: `Ayarlar -> Play in external player` menusunde Linux'ta yalnizca
 "Disabled / M3U Playlist" gorunur, bu Stremio'nun tasarimidir; MPV her
 yayinda `...` menusunden secilir.
