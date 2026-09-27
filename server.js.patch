@@ -1,0 +1,46 @@
+--- /tmp/opencode/stremio-server.js.bak	2026-09-27 17:28:01.279364965 +0300
++++ /home/kaan/.local/share/flatpak/app/com.stremio.Stremio/x86_64/stable/7580e7db921fc46aa1cca51623ec404b5a313dd5868ece9506cac4a42ed92131/files/libexec/stremio/server.js	2026-09-27 17:28:40.632593654 +0300
+@@ -83208,10 +83208,19 @@
+                 }
+             }
+         };
++        var stremioHostPlayerPrefix = function(p) {
++            var q = p.replace(/"/gi, "");
++            if (fs.existsSync(q)) return "";
++            try {
++                return child.execSync('/usr/bin/flatpak-spawn --host test -x "' + q + '"', { stdio: "ignore" }), "/usr/bin/flatpak-spawn --host ";
++            } catch (e) {
++                return null;
++            }
++        };
+         devices.groups.external = [], Object.keys(players).forEach((function(el) {
+             var player = players[el];
+             player[process.platform] && player[process.platform].path.forEach((function(p) {
+-                fs.existsSync(p.replace(/"/gi, "")) && devices.groups.external.push((function(player, platform) {
++                null !== stremioHostPlayerPrefix(p) && devices.groups.external.push((function(player, platform) {
+                     var playerObj = players[player], platformObj = playerObj[platform];
+                     return {
+                         name: playerObj.title,
+@@ -83228,10 +83237,10 @@
+                             setTimeout((function() {
+                                 var port = enginefs.baseUrl.match(".*?:([0-9]+)")[1], host = enginefs.baseUrl.match("^http://(.*):[0-9]+$")[1], subsPath = self.subtitlesSrc, time = self.time, subsFile = "", playExternal = function() {
+                                     var playerPaths = platformObj.path.filter((function(path) {
+-                                        return fs.existsSync(path.replace(/"/gi, ""));
+-                                    }));
++                                        return null !== stremioHostPlayerPrefix(path);
++                                    })), stremioSpawnPfx = playerPaths.length > 0 ? stremioHostPlayerPrefix(playerPaths[0]) : "";
+                                     if (playerPaths.length > 0) {
+-                                        var wrappedSrc = '"' + src + '"', subsCmd = subsFile && players[player].subArg && players[player].subArg.length > 0 ? players[player].subArg + subsFile : "", argsCmd = players[player].args && players[player].args.length > 0 ? players[player].args.join(" ") : "", timeCmd = players[player].timeArg && players[player].timeArg.length > 0 ? players[player].timeArg + parseInt(time / 1e3) : "", playCmd = players[player].playArg && players[player].playArg.length > 0 ? players[player].playArg + wrappedSrc : wrappedSrc, fullCmd = playerPaths[0] + " " + timeCmd + " " + argsCmd + " " + subsCmd + " " + playCmd;
++                                        var wrappedSrc = '"' + src + '"', subsCmd = subsFile && players[player].subArg && players[player].subArg.length > 0 ? players[player].subArg + subsFile : "", argsCmd = players[player].args && players[player].args.length > 0 ? players[player].args.join(" ") : "", timeCmd = players[player].timeArg && players[player].timeArg.length > 0 ? players[player].timeArg + parseInt(time / 1e3) : "", playCmd = players[player].playArg && players[player].playArg.length > 0 ? players[player].playArg + wrappedSrc : wrappedSrc, fullCmd = stremioSpawnPfx + playerPaths[0] + " " + timeCmd + " " + argsCmd + " " + subsCmd + " " + playCmd;
+                                         child.exec(fullCmd, (function(error) {
+                                             console.error("Failed executing external player command:", error);
+                                         })).on("exit", (function() {
+@@ -83243,7 +83252,7 @@
+                                         }));
+                                     }
+                                 };
+-                                subsPath ? (subsFile = path.join(os.tmpdir(), "stremio-" + player + "-subtitles.srt"), 
++                                subsPath ? (subsFile = path.join((function() { try { var d = path.join(os.homedir(), ".cache"); return fs.mkdirSync(d, { recursive: !0 }), d; } catch (e) { return os.tmpdir(); } })(), "stremio-" + player + "-subtitles.srt"), 
+                                 http.request({
+                                     host: host,
+                                     path: "/subtitles.srt?from=" + encodeURIComponent(subsPath),
